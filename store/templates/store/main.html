@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% static 'favicon.ico' %}
 <html>
 
 <head>
@@ -7,6 +8,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <script type="text/javascript">
+         var user = '{{request.user}}'
+         function getToken(name) {
+         let cookieValue = null;
+         if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getToken('csrftoken')
+
+    function getCookie(name) {
+          var cookieArr = document.cookie.split(";");
+          for(var i = 0; i < cookieArr.length; i++) {
+                var cookiePair = cookieArr[i].split("=");
+          if(name == cookiePair[0].trim()) {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+        var cart = JSON.parse(getCookie('cart'))
+
+        if (cart == undefined){
+            cart = {}
+            console.log('Cart Created!', cart)
+            document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+        }
+        console.log('Cart:', cart)
+    </script>
 </head>
 
 <body>
@@ -26,7 +64,7 @@
                       <a href="{% url 'store:cart' %}">
               <img   id="cart-icon" src="{% static 'images/cart.png' %}">
             </a>
-            <p id="cart-total">0</p>
+            <p id="cart-total">{{cartItems}}</p>
             </div>
 
         </div>
@@ -38,6 +76,6 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
 </body>
-
 </html>
